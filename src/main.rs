@@ -1,5 +1,7 @@
 use std::{env, fs::read_to_string};
 
+use experimental_compiler::compiler::{token};
+
 fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -20,6 +22,8 @@ fn main() {
     };
 
     println!("{}", &contents);
+
+    token::tokenize(&contents);
 
     std::process::exit(0);
 }
