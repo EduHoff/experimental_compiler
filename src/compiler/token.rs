@@ -83,7 +83,12 @@ pub struct Token {
 }
 
 impl Token {
-    pub fn new(value: Option<String>, token_type: TokenType) -> Self {        
-        Token { token_type, value, line: 0, column: 0 }
+    pub fn new(value: Option<String>, token_type: TokenType) -> Self {
+        Token {
+            token_type,
+            value,
+            line: 0,
+            column: 0,
+        }
     }
 }
