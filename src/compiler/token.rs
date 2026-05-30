@@ -28,83 +28,62 @@ pub enum TokenType {
     True,
     False,
 
-    // --- Dynamic Literals and Identifiers ---
-    IntLit,      // e.g., 42
-    FloatLit,    // e.g., 3.14
-    CharLit,     // e.g., 'a'
-    Ident,       // Variable or function names, e.g., "my_variable"
-
     // --- Operators ---
-    Assign,      // =
-    Plus,        // +
-    Minus,       // -
-    Star,        // *
-    Slash,       // /
-    
+    Assign, // =
+    Plus,   // +
+    Minus,  // -
+    Star,   // *
+    Slash,  // /
+
     // --- Logical Operators ---
-    And,         // &&
-    Or,          // ||
-    Not,         // !
-    
+    And, // &&
+    Or,  // ||
+    Not, // !
+
     // --- Relational Operators ---
-    Eq,          // ==
-    NotEq,       // !=
-    Lt,          // <
-    Gt,          // >
+    Eq,    // ==
+    NotEq, // !=
+    Lt,    // <
+    Gt,    // >
+    LtEq,  // <=
+    GtEq,  // >=
 
     // --- Bitwise Operators ---
-    BitAnd,      // &
-    BitOr,       // |
-    BitXor,      // ^
-    BitNot,      // ~
-    Shl,         // << (Shift left)
-    Shr,         // >> (Shift right)
+    BitAnd, // &
+    BitOr,  // |
+    BitXor, // ^
+    BitNot, // ~
+    Shl,    // << (Shift left)
+    Shr,    // >> (Shift right)
 
     // --- Punctuation & Delimitators ---
-    Semi,        // ;
-    Comma,       // ,
-    Colon,       // :
-    OpenParen,   // (
-    CloseParen,  // )
-    OpenCurly,   // {
-    CloseCurly,  // }
-    OpenBracket, // [
-    CloseBracket,// ]
+    Semi,         // ;
+    Comma,        // ,
+    Colon,        // :
+    OpenParen,    // (
+    CloseParen,   // )
+    OpenCurly,    // {
+    CloseCurly,   // }
+    OpenBracket,  // [
+    CloseBracket, // ]
+
+    // --- Dynamic Literals and Identifiers ---
+    IntLit,   // e.g., 42
+    FloatLit, // e.g., 3.14
+    CharLit,  // e.g., 'a'
+    Ident,    // Variable or function names, e.g., "my_variable"
 }
 
 #[derive(Debug, Clone)]
 pub struct Token {
-    pub token_type: TokenType,
-    pub value: Option<String>,
+    token_type: TokenType,
+    value: Option<String>,
+    line: usize,
+    column: usize,
 }
 
-pub fn tokenize(str: &str) -> Vec<Token> {
-    let tokens = Vec::new();
-
-    let mut chars = str.chars().peekable();
-
-    while let Some(&c) = chars.peek() {
-        if c.is_alphabetic() {
-
-            let mut buf = String::new();
-
-            buf.push(c);
-            chars.next();
-
-            while let Some(&next_c) = chars.peek() {
-                if next_c.is_alphanumeric() {
-                    buf.push(next_c);
-                    chars.next();
-                } else {
-                    break;
-                }
-            }
-
-            println!("Word captured: {}", buf);
-        } else {
-            chars.next();
-        }
+impl Token {
+    pub fn new(value: Option<String>, token_type: TokenType) -> Self {        
+        Token { token_type, value, line: 0, column: 0 }
     }
-
-    tokens
 }

@@ -1,6 +1,6 @@
 use std::{env, fs::read_to_string};
 
-use experimental_compiler::compiler::{token};
+use experimental_compiler::compiler::{lexer};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -23,7 +23,11 @@ fn main() {
 
     println!("{}", &contents);
 
-    token::tokenize(&contents);
+    let token_list = lexer::tokenize(&contents);
+
+    for tk in token_list.iter() {
+        println!("{:?}\n", tk);
+    }
 
     std::process::exit(0);
 }
