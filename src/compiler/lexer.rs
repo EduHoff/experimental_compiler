@@ -1,6 +1,9 @@
 use std::{iter::Peekable, str::Chars};
 
-use crate::compiler::token::{Token, TokenType};
+use crate::compiler::token::{
+    Token,
+    TokenType::{self},
+};
 
 fn advance(chars: &mut Peekable<Chars>, line: &mut usize, column: &mut usize) {
     let c = chars.peek();
@@ -76,9 +79,18 @@ fn read_number_literal(chars: &mut Peekable<Chars>, line: &mut usize, column: &m
 
     let current_line = *line;
     let current_column = *column;
+    let mut has_dot = 0;
 
     while let Some(&c) = chars.peek() {
         if c.is_ascii_digit() || c == '.' {
+            if c == '.' {
+                has_dot += 1;
+            }
+
+            if has_dot > 1 {
+                break;
+            }
+
             buf.push(c);
             advance(chars, line, column);
         } else {
@@ -93,6 +105,41 @@ fn read_number_literal(chars: &mut Peekable<Chars>, line: &mut usize, column: &m
     };
 
     Token::new(Some(buf), token_type, current_line, current_column)
+}
+
+fn read_operator_or_punctuation(
+    chars: &mut Peekable<Chars>,
+    line: &mut usize,
+    column: &mut usize,
+) -> Token {
+    //let mut buf = String::new();
+
+    let current_line = *line;
+    let current_column = *column;
+
+    let c = chars.peek();
+    let value = c.map(|caractere| caractere.to_string()); //talvez tenha que colocar dentro do if let some(t_type) posteriormente
+
+    let token_type = match c {
+        Some(&';') => Some(TokenType::Semi),
+        Some(&',') => Some(TokenType::Comma),
+        Some(&':') => Some(TokenType::Colon),
+        Some(&'(') => Some(TokenType::OpenParen),
+        Some(&')') => Some(TokenType::CloseParen),
+        Some(&'{') => Some(TokenType::OpenCurly),
+        Some(&'}') => Some(TokenType::CloseCurly),
+        Some(&'[') => Some(TokenType::OpenBracket),
+        Some(&']') => Some(TokenType::CloseBracket),
+        _ => None,
+    };
+
+    if let Some(t_type) = token_type {
+        advance(chars, line, column);
+        return Token::new(value, t_type, current_line, current_column);
+    }
+
+    advance(chars, line, column);
+    Token::new(value, TokenType::Ident, current_line, current_column) // retorno temporário apenas para remover erro do compilador
 }
 
 pub fn tokenize(str: &str) -> Vec<Token> {
@@ -113,7 +160,8 @@ pub fn tokenize(str: &str) -> Vec<Token> {
             let token = read_number_literal(&mut chars, &mut line, &mut column);
             tokens.push(token);
         } else {
-            advance(&mut chars, &mut line, &mut column);
+            let token = read_operator_or_punctuation(&mut chars, &mut line, &mut column);
+            tokens.push(token);
         }
     }
 

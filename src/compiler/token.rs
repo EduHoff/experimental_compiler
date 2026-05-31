@@ -71,6 +71,7 @@ pub enum TokenType {
     IntLit,    // e.g., 42
     DoubleLit, // e.g., 3.14
     CharLit,   // e.g., 'a'
+    StringLit, // e.g., "hello world"
     Ident,     // Variable or function names, e.g., "my_variable"
 }
 
