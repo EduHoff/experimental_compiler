@@ -113,34 +113,52 @@ fn read_operator_or_punctuation(
     line: &mut usize,
     column: &mut usize,
 ) -> Token {
-    //let mut buf = String::new();
+    let mut buf = String::new();
 
     let current_line = *line;
     let current_column = *column;
 
-    let c = chars.peek();
-    let value = c.map(|caractere| caractere.to_string()); //talvez tenha que colocar dentro do if let some(t_type) posteriormente
+    if let Some(&c) = chars.peek() {
+        buf.push(c);
 
-    let token_type = match c {
-        Some(&';') => Some(TokenType::Semi),
-        Some(&',') => Some(TokenType::Comma),
-        Some(&':') => Some(TokenType::Colon),
-        Some(&'(') => Some(TokenType::OpenParen),
-        Some(&')') => Some(TokenType::CloseParen),
-        Some(&'{') => Some(TokenType::OpenCurly),
-        Some(&'}') => Some(TokenType::CloseCurly),
-        Some(&'[') => Some(TokenType::OpenBracket),
-        Some(&']') => Some(TokenType::CloseBracket),
-        _ => None,
-    };
+        let token_type = match c {
+            ';' => Some(TokenType::Semi),
+            ',' => Some(TokenType::Comma),
+            ':' => Some(TokenType::Colon),
+            '(' => Some(TokenType::OpenParen),
+            ')' => Some(TokenType::CloseParen),
+            '{' => Some(TokenType::OpenCurly),
+            '}' => Some(TokenType::CloseCurly),
+            '[' => Some(TokenType::OpenBracket),
+            ']' => Some(TokenType::CloseBracket),
+            '^' => Some(TokenType::BitXor),
+            '~' => Some(TokenType::BitNot),
+            _ => None,
+        };
 
-    if let Some(t_type) = token_type {
-        advance(chars, line, column);
-        return Token::new(value, t_type, current_line, current_column);
+        if let Some(t_type) = token_type {
+            advance(chars, line, column);
+            return Token::new(Some(buf), t_type, current_line, current_column);
+        }
+
+        match buf.as_str() {
+            "=" => {}
+            "+" => {}
+            "-" => {}
+            "*" => {}
+            "/" => {}
+            "%" => {}
+            "&" => {}
+            "|" => {}
+            "!" => {}
+            "<" => {}
+            ">" => {}
+            _ => {}
+        }
     }
 
     advance(chars, line, column);
-    Token::new(value, TokenType::Ident, current_line, current_column) // retorno temporário apenas para remover erro do compilador
+    Token::new(Some(buf), TokenType::Invalid, current_line, current_column)
 }
 
 pub fn tokenize(str: &str) -> Vec<Token> {

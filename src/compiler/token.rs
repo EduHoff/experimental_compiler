@@ -35,6 +35,18 @@ pub enum TokenType {
     Minus,  // -
     Star,   // *
     Slash,  // /
+    Modulo, // %
+
+    // --- Compound Assignment Operators ---
+    PlusAssign,  // +=
+    MinusAssign, // -=
+    StarAssign,  // *=
+    SlashAssign, // /=
+    ModAssign,   // %=
+
+    // --- Increment & Decrement Operators
+    Increment, // ++
+    Decrement, // --
 
     // --- Logical Operators ---
     And, // &&
