@@ -48,6 +48,7 @@ fn read_identifier_or_keyword(
     }
 
     let token_type: TokenType = match buf.as_str() {
+        "import" => TokenType::Import,
         "return" => TokenType::Return,
         "if" => TokenType::If,
         "else" => TokenType::Else,

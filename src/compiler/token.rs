@@ -1,6 +1,7 @@
 #[derive(Debug, Clone, PartialEq)]
 pub enum TokenType {
     // --- Control Flow Keywords ---
+    Import,
     Return,
     If,
     Else,
@@ -67,12 +68,19 @@ pub enum TokenType {
     OpenBracket,  // [
     CloseBracket, // ]
 
+    // --- Comments ---
+    LineComment,  // //
+    BlockComment, // /* */
+
     // --- Dynamic Literals and Identifiers ---
     IntLit,    // e.g., 42
     DoubleLit, // e.g., 3.14
     CharLit,   // e.g., 'a'
     StringLit, // e.g., "hello world"
     Ident,     // Variable or function names, e.g., "my_variable"
+
+    // --- Special & Error Handling ---
+    Invalid,
 }
 
 #[derive(Debug, Clone)]
@@ -81,6 +89,7 @@ pub struct Token {
     value: Option<String>,
     line: usize,
     column: usize,
+    //file_id: usize, // Reservado para uso futuro (quando tiver imports)
 }
 
 impl Token {
@@ -90,6 +99,7 @@ impl Token {
             value,
             line,
             column,
+            //file_id: 0,
         }
     }
 
