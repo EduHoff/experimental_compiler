@@ -43,6 +43,11 @@ pub enum TokenType {
     StarAssign,  // *=
     SlashAssign, // /=
     ModAssign,   // %=
+    AndAssign,   // &=
+    OrAssign,    // |=
+    XorAssign,   // ^=
+    ShlAssign,   // <<=
+    ShrAssign,   // >>=
 
     // --- Increment & Decrement Operators
     Increment, // ++
@@ -72,6 +77,7 @@ pub enum TokenType {
     // --- Punctuation & Delimitators ---
     Semi,         // ;
     Comma,        // ,
+    Dot,          // .
     Colon,        // :
     OpenParen,    // (
     CloseParen,   // )
