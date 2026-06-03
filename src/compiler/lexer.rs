@@ -81,17 +81,20 @@ fn read_number_literal(chars: &mut Peekable<Chars>, line: &mut usize, column: &m
     let current_line = *line;
     let current_column = *column;
     let mut has_dot = 0;
+    let mut has_fractional_part = false;
 
     while let Some(&c) = chars.peek() {
-        if c.is_ascii_digit() || c == '.' {
-            if c == '.' {
-                has_dot += 1;
+        if c.is_ascii_digit() {
+            if has_dot == 1 {
+                has_fractional_part = true;
             }
-
+            buf.push(c);
+            advance(chars, line, column);
+        } else if c == '.' {
+            has_dot += 1;
             if has_dot > 1 {
                 break;
             }
-
             buf.push(c);
             advance(chars, line, column);
         } else {
@@ -99,8 +102,14 @@ fn read_number_literal(chars: &mut Peekable<Chars>, line: &mut usize, column: &m
         }
     }
 
-    let token_type = if buf.contains('.') {
-        TokenType::DoubleLit
+    let token_type = if has_dot == 1 {
+        if has_fractional_part {
+            TokenType::DoubleLit
+        } else {
+            TokenType::Invalid
+        }
+    } else if has_dot > 1 {
+        TokenType::Invalid
     } else {
         TokenType::IntLit
     };
@@ -128,6 +137,8 @@ fn read_string(chars: &mut Peekable<Chars>, line: &mut usize, column: &mut usize
         } else if c == '"' {
             advance(chars, line, column);
             closed = true;
+            break;
+        } else if c == '\n' {
             break;
         } else {
             buf.push(c);
@@ -174,6 +185,8 @@ fn read_char(chars: &mut Peekable<Chars>, line: &mut usize, column: &mut usize) 
         } else if c == '\'' {
             advance(chars, line, column);
             closed = true;
+            break;
+        } else if c == '\n' {
             break;
         } else {
             buf.push(c);
