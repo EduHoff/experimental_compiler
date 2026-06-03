@@ -93,6 +93,8 @@ fn read_number_literal(chars: &mut Peekable<Chars>, line: &mut usize, column: &m
         } else if c == '.' {
             has_dot += 1;
             if has_dot > 1 {
+                buf.push(c);
+                advance(chars, line, column);
                 break;
             }
             buf.push(c);
@@ -174,6 +176,10 @@ fn read_char(chars: &mut Peekable<Chars>, line: &mut usize, column: &mut usize) 
 
     while let Some(&c) = chars.peek() {
         if c == '\\' {
+            if content_count > 0 {
+                break;
+            }
+
             buf.push(c);
             advance(chars, line, column);
 
@@ -189,6 +195,10 @@ fn read_char(chars: &mut Peekable<Chars>, line: &mut usize, column: &mut usize) 
         } else if c == '\n' {
             break;
         } else {
+            if content_count >= 1 {
+                break;
+            }
+
             buf.push(c);
             advance(chars, line, column);
             content_count += 1;
@@ -196,19 +206,9 @@ fn read_char(chars: &mut Peekable<Chars>, line: &mut usize, column: &mut usize) 
     }
 
     if closed && content_count == 1 {
-        Token::new(
-            Some(buf.clone()),
-            TokenType::CharLit,
-            current_line,
-            current_column,
-        )
+        Token::new(Some(buf), TokenType::CharLit, current_line, current_column)
     } else {
-        Token::new(
-            Some(buf.clone()),
-            TokenType::Invalid,
-            current_line,
-            current_column,
-        )
+        Token::new(Some(buf), TokenType::Invalid, current_line, current_column)
     }
 }
 
